@@ -1,0 +1,102 @@
+<!DOCTYPE>
+<html>
+<head></head>
+<body>
+<center>
+
+<script src="https://cdn.jsdelivr.net/particle-api-js/5/particle.min.js"></script>
+<img id="myImage" src="washing-machine.jpg" width="100" height="180"> 
+<br>
+<br>
+<span id="mySpan"> Status </span>
+<br>
+
+<br>
+<br>
+<br>
+<button onclick="getMachineStatus()">Check Status</button>
+
+<script>
+var token_global;
+var global_analogvalue;
+
+function getAccessToken() {
+     var token_ref;
+    var  ana_value;
+    var particle = new Particle();
+		particle.login({ username: 'raut0004@stthomas.edu', password: 'Sam033561696' })
+			.then(function(result) {
+                                token_ref = result.body.access_token;
+                                token_global = token_ref;
+				console.log('Your access token', result.body.access_token);
+			}, function(err) {
+				console.error(err);
+			});
+    console.log(token_ref);
+       
+   }
+
+function getData(){
+var analogresult;
+var particle = new Particle();
+	particle.getVariable({ deviceId: '3b0040001147343438323536', name: 'Status', auth: token_global }).then(function(data) {
+  	console.log('Device variable retrieved successfully:', data);
+        global_analogvalue = data.body.result;
+        //analogresult = data.body.result;
+        console.log("Machine Status:", global_analogvalue);
+	}, function(err) {
+ 	 console.log('An error occurred while getting attrs:', err);
+	});
+   
+   // if (global_analogvalue != null){
+     
+    //alert(global_analogvalue);
+    //document.getElementById("demo").innerHTML = "YOU CLICKED ME!";
+    //return analogresult;
+}
+
+function changeImage(status) {
+    var image = document.getElementById('myImage');
+    
+    if (status == 1){
+        image.src = "pic_bulbon.gif";
+        document.getElementById("mySpan").innerHTML = "Machine is in use";
+     }
+    else{
+        image.src = "pic_bulboff.gif";
+        document.getElementById("mySpan").innerHTML = "Machine is not in use";
+        
+     }
+ }
+
+function dologic(){
+  light_status = global_analogvalue;   
+       console.log("light status", light_status);
+       if (light_status == 1){
+           changeImage(light_status) 
+         }
+      else{
+      //if lightstatus is not on
+      //send machine not in use
+      changeImage(light_status);
+      return;
+  }
+}
+
+function getMachineStatus(){
+      
+       var light_status;
+       getAccessToken();
+       getData();
+      setTimeout(getData, 3000);  
+       setTimeout(dologic, 4000);
+  }      
+
+
+</script>
+
+  </center>
+  </body>
+</html>
+
+
